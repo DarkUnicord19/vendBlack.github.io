@@ -1,0 +1,123 @@
+<!-- vending_machine_catalogue.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine Catalogue</title>
+    <style>
+        /* Add some basic styling to make the page visually appealing */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .vending-machine {
+            width: 80%;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+        .item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: bold;
+        }
+        .item-price {
+            font-size: 18px;
+            color: #666;
+        }
+        .selected {
+            background-color: #f7f7f7;
+        }
+        #total-cost {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="vending-machine">
+        <h1>Vending Machine Catalogue</h1>
+        <ul id="item-list">
+            <!-- Items will be rendered here -->
+        </ul>
+        <p id="total-cost">Total Cost: $0.00</p>
+        <button id="buy-button">Buy Selected Items</button>
+    </div>
+
+    <script>
+        // Sample data for the vending machine items
+        const items = [
+            { id: 1, name: "Coca-Cola", price: 1.50, image: "coke.png" },
+            { id: 2, name: "Pepsi", price: 1.50, image: "pepsi.png" },
+            { id: 3, name: "Lays Chips", price: 2.00, image: "lays.png" },
+            { id: 4, name: "Doritos", price: 2.50, image: "doritos.png" },
+            { id: 5, name: "M&M's", price: 1.00, image: "mms.png" },
+        ];
+
+        // Render the items in the vending machine
+        const itemList = document.getElementById("item-list");
+        items.forEach((item) => {
+            const itemHTML = `
+                <li class="item" data-item-id="${item.id}">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="item-info">
+                        <span class="item-name">${item.name}</span>
+                        <span class="item-price">$${item.price.toFixed(2)}</span>
+                    </div>
+                </li>
+            `;
+            itemList.innerHTML += itemHTML;
+        });
+
+        // Add event listeners to the items
+        const itemsList = document.querySelectorAll(".item");
+        itemsList.forEach((item) => {
+            item.addEventListener("click", (e) => {
+                item.classList.toggle("selected");
+                updateTotalCost();
+            });
+        });
+
+        // Update the total cost when items are selected
+        function updateTotalCost() {
+            const selectedItems = document.querySelectorAll(".item.selected");
+            let totalCost = 0;
+            selectedItems.forEach((item) => {
+                const itemId = item.getAttribute("data-item-id");
+                const itemPrice = items.find((i) => i.id === parseInt(itemId)).price;
+                totalCost += itemPrice;
+            });
+            document.getElementById("total-cost").innerText = `Total Cost: $${totalCost.toFixed(2)}`;
+        }
+
+        // Add event listener to the buy button
+        document.getElementById("buy-button").addEventListener("click", () => {
+            const selectedItems = document.querySelectorAll(".item.selected");
+            if (selectedItems.length > 0) {
+                alert(`You have purchased ${selectedItems.length} items for $${totalCost.toFixed(2)}`);
+                // Reset the selection and total cost
+                selectedItems.forEach((item) => item.classList.remove("selected"));
+                document.getElementById("total-cost").innerText = `Total Cost: $0.00`;
+            } else {
+                alert("Please select some items to purchase.");
